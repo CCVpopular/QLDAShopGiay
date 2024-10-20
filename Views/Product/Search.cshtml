@@ -1,0 +1,187 @@
+﻿@using X.PagedList.Mvc.Core
+
+@model X.PagedList.IPagedList<ShopGiay.Models.Product>
+
+@{
+    ViewData["Title"] = "Search";
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <br /> 
+}
+<div id="searchWithManyValueContainer">
+    <!-- The partial view content will be loaded here -->
+</div>
+<br />
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            url: '@Url.Action("SearchWithManyVaule", "Product")',
+            type: 'GET',
+            success: function (data) {
+                $('#searchWithManyValueContainer').html(data);
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX call failed:', status, error);
+            }
+        });
+    });
+</script>
+<div class="container">
+        <table class="table table-striped">
+            <tbody>
+                <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <a asp-action="Details" asp-route-id="@item.Id">
+                                <img class="card-img-top product-img" src="@item.ImageUrl" alt="@item.Name">
+                            </a>
+                            <div class="card-body">
+                                <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
+                                    <input type="hidden" name="productId" value="@item.Id" />
+                                    <input type="hidden" id="quantity" name="quantity" value="1" min="1" />
+                                    <input type="hidden" name="action" value="Search"/>
+                                    <input type="hidden" name="Size" value="37" />
+                                    <button class="btn btn-info btn-sm add-to-cart-button" type="submit">Thêm vào giỏ hàng</button>
+                                </form>
+                                <h4 class="card-title">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="product-title">@item.Name</a>
+                                </h4>
+                                <h5>
+                                    @if (item.PromotionId != null)
+                                    {
+                                        <span>
+                                            @string.Format("{0:N0}", item.DiscountedPrice)đ
+                                        </span>
+                                        <span style="text-decoration: line-through; color: dimgray;">
+                                            @string.Format("{0:N0}", item.Price)đ
+                                        </span>
+                                        <span style="color: red;">
+                                            @item.Promotions.DiscountPercent%
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>@string.Format("{0:N0}", item.Price)đ</span>
+                                    }
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                }
+                </div>
+            </tbody>
+        </table>
+    <div class="text-center mt-4">
+        @Html.PagedListPager(Model, page => Url.Action("Search", new { page, searchString = ViewBag.CurrentFilter }),
+                 new PagedListRenderOptions
+        {
+            Display = PagedListDisplayMode.IfNeeded,
+            MaximumPageNumbersToDisplay = 1000,
+            UlElementClasses = new[] { "pagination" },
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link" }
+        })
+    </div>
+</div>
+
+<style>
+    .headertop {
+        position: fixed;
+        top: 0;
+        width: 100%; /* Đảm bảo header chiếm toàn bộ chiều rộng của trình duyệt */
+        z-index: 500; /* Đảm bảo header hiển thị trên cùng của các phần tử khác */
+        /* Thêm các thuộc tính CSS khác nếu cần */
+    }
+
+    .header-bottom {
+        border-bottom: 2px solid #ccc; /* Đường viền dưới */
+        position: fixed; /* hoặc position: sticky; */
+        top: 60px; /* Điều chỉnh giá trị tùy thuộc vào chiều cao của menu đầu tiên */
+        width: 100%;
+        z-index: 400;
+    }
+    .add-to-cart-button {
+        display: none;
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: center;
+    }
+
+    .product-title {
+        font-size: 14px;
+        color: #000000;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .swiper-container.slidehomepage.slidehomepage-1 {
+        max-width: 100%;
+        overflow: hidden;
+        background-color: #f0f0f0;
+    }
+
+    .swiper-wrapper {
+        display: flex;
+    }
+
+    .swiper-slide {
+        flex: 0 0 auto;
+        width: 33.33%;
+    }
+
+    .card {
+        position: relative;
+    }
+
+        .card:hover .product-img {
+            transform: scale(1.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+    .product-img {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card-body {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .product-title {
+        font-size: 14px;
+        color: #000000;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var productCards = document.querySelectorAll(".card");
+
+        productCards.forEach(function (card) {
+            card.addEventListener("mouseover", function () {
+                var addToCartButton = card.querySelector(".add-to-cart-button");
+                addToCartButton.style.display = "block";
+            });
+
+            card.addEventListener("mouseout", function () {
+                var addToCartButton = card.querySelector(".add-to-cart-button");
+                addToCartButton.style.display = "none";
+            });
+        });
+    });
+</script>
+
+
+
+

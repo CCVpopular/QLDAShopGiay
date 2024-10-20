@@ -1,0 +1,87 @@
+﻿@model IEnumerable<ShopGiay.Models.Order>
+
+@{
+    ViewData["Title"] = "Order List";
+}
+
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Ngày Đặt Hàng</th>
+            <th>Tên KHách Hàng</th>
+            <th>Địa chỉ nhận hàng</th>
+            <th>Tổng tiền</th>
+            <th>Tình trạng giao hàng</th>
+            <th>Trạng thái thanh toán</th>
+            <th>Ghi chú</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.OrderDate</td>
+                <td>@order.User.FullName</td>
+                <td>@order.ShippingAddress</td>
+                <td>@String.Format("{0:N0}", order.Total)đ</td>
+                <td>@(order.IsShipped ? "Đã Giao" : "Chưa Giao")</td>
+                <td>@order.OrderStatus</td>
+                <td>@order.Notes</td>
+                <td>
+                    <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@order.Id"><i class="fas fa-edit"></i>Sửa</a>
+                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@order.Id"><i class="fas fa-eye"></i> Chi Tiết</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@order.Id"><i class="fas fa-trash-alt"></i> Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<style>
+    /* General styles */
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    /* Style for the order table */
+    .order-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .order-table th, .order-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .order-table th {
+            background-color: #f2f2f2;
+        }
+
+        .order-table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .order-table tbody tr:hover {
+            background-color: #e0e0e0;
+        }
+
+    /* Style for buttons */
+
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+    }
+
+    .btn-danger {
+        color: #fff;
+        background-color: #dc3545;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+        color: #fff;
+    }
+
+</style>
